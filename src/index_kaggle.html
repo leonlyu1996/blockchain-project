@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <title>Decentralized Kaggle</title>
+    <style>
+    .menu-title {
+      font-weight: 700;
+    }
+    .btn-menu {
+      color : #00bffe;
+      border: 1px solid #00bffe;
+      font-size: 18px;
+      padding: 20px 28px;
+      width: fit-content;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-push-2">
+          <h1 class="text-center" style="color:#20BEFF">Daggle</h1>
+          <br/>
+          <h4 class="text-center">The Decentralized Kaggle</h4>
+        </div>
+      </div>
+      <hr/>
+      <br/>
+      <div id="mainMenuRow" class="row">
+        <div class="col-sm-6 col-md-4 col-lg-4">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <div style="height:50px">
+                <h3 class="text-center menu-title">Start a new project</h3>
+              </div>
+              <br/><br/>
+              <img src="images/start_icon.svg" style="width:100%">
+              <br/><br/>
+              <button type="button" class="btn btn-default btn-menu center-bloc" data-toggle="modal" data-target="#competitionCreateModal">
+                New Project
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-4">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <div style="height:50px">
+              <h3 class="text-center menu-title">Explore projects</h3>
+              </div>
+              <br/><br/>
+              <img src="images/explore_icon.svg" style="width:100%">
+              <br/><br/>
+              <a href="competitions.html" class="btn btn-default btn-menu center-block">View Projects</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-4">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <div style="height:50px">
+              <h3 class="text-center menu-title">Participate competitions</h3>
+              </div>
+              <br/><br/>
+              <img src="images/join_icon.svg" style="width:100%">
+              <br/><br/>
+              <a href="competitions.html" class="btn btn-default btn-menu center-block">Join Competitions</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Competition Create Modal -->
+    <div class="modal fade" id="competitionCreateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Create competition</h4>
+          </div>
+          <div class="modal-body">
+            <form role="form" id="competitionCreationForm">
+              <div class="form-group">
+                <label for="competitionTitle">Title:</label>
+                <input id="competitionTitle"  class="form-control" placeholder="insert title...">
+              </div>
+              <div class="form-group">
+                <label for="competitionDescription">Description:</label>
+                <input id="competitionDescription"  class="form-control" placeholder="insert description...">
+              </div>
+              <div class="form-group">
+                <label for="competitionEvaluationMethod">Evaluation method:</label>
+                <select id="competitionEvaluationMethod"  class="form-control">
+                  <option>Accuracy</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="competitionData">Upload data:</label>
+                <input type="file" class="form-control-file" id="competitionData">
+              </div>
+              <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Competition Create Modal -->
+    <div class="modal fade" id="competitionCreateModal" tabindex="-1" role="dialog" aria-labelledby="competitionCreateModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="competitionCreateModalLabel">Create competition</h4>
+          </div>
+          <div class="modal-body">
+            <form role="form" id="competitionCreationForm">
+              <div class="form-group">
+                <label for="competitionTitle">Title:</label>
+                <input id="competitionTitle"  class="form-control" placeholder="insert title...">
+              </div>
+              <div class="form-group">
+                <label for="competitionDescription">Description:</label>
+                <input id="competitionDescription"  class="form-control" placeholder="insert description...">
+              </div>
+              <div class="form-group">
+                <label for="competitionEvaluationMethod">Evaluation method:</label>
+                <select id="competitionEvaluationMethod"  class="form-control">
+                  <option>Accuracy</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="competitionData">Upload data:</label>
+                <input type="file" class="form-control-file" id="competitionData">
+              </div>
+              <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="js/app_kaggle.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+  <script>
+  $(function() {
+    $('#competitionCreationForm').on("submit",function(e) {
+      e.preventDefault(); // cancel the actual submit
+
+      /* do what you want with the form */
+
+      // Should be triggered on form submit
+      $('#competitionCreateModal').modal('hide');
+      console.log(e);
+      console.log("submitted");
+    });
+  });
+  </script>
+
+</html>

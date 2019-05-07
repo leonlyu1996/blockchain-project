@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <title>Daggle - Competitions List</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-push-2">
+          <h1 class="text-center" style="color:#20BEFF">Daggle</h1>
+          <br/>
+          <h4 class="text-center">The Decentralized Kaggle</h4>
+        </div>
+      </div>
+      <hr/>
+      <br/>
+      <div id="competitionRow" class="row">
+        <div id="competitionTemplate">
+          <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Competition Title 1</h3>
+              </div>
+              <div class="panel-body">
+                <strong>Description</strong>: <span class="competition-description">Competition 1 description</span><br/>
+                <strong>Evaluation Method</strong>: <span class="competition-evaluation">Accuracy</span><br/>
+                <button class="btn btn-default btn-menu" type="button" data-id="0">Join</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="competitionTemplate" style="display: none;">
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Competition Title 1</h3>
+            </div>
+            <div class="panel-body">
+              <strong>Description</strong>: <span class="competition-description">Competition 1 description</span><br/>
+              <strong>Evaluation Method</strong>: <span class="competition-evaluation">Accuracy</span><br/>
+              <button class="btn btn-default btn-menu" type="button" data-id="0">Join</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="js/app_kaggle.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+  <script>
+  $(function() {
+    $('#competitionCreationForm').on("submit",function(e) {
+      e.preventDefault(); // cancel the actual submit
+
+      /* do what you want with the form */
+
+      // Should be triggered on form submit
+      $('#competitionCreateModal').modal('hide');
+      console.log(e);
+      console.log("submitted");
+    });
+  });
+  </script>
+
+</html>

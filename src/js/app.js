@@ -1,3 +1,5 @@
+import ipfs from './ipfs';
+
 App = {
   web3Provider: null,
   contracts: {},
@@ -109,6 +111,39 @@ App = {
         return App.markAdopted();
       }).catch(function(err) {
         console.log(err.message);
+      });
+    });
+  },
+
+  captureFile: function(event) {
+    event.stopPropagation()
+    event.preventDefault()
+    const file = event.target.files[0]
+    let reader = new window.FileReader()
+    reader.readAsArrayBuffer(file)
+    reader.onloadend = () => this.convertToBuffer(reader)
+  },
+
+  convertToBuffer: async function(reader) {
+    //file is converted to a buffer for upload to IPFS
+    const buffer = await Buffer.from(reader.result);
+    //set this buffer -using es6 syntax
+    this.setState({buffer});
+  },
+
+  onSubmit: async function(event) {
+    event.preventDefault();
+    console.log("web3 value is ",web3.eth.getAccounts());
+    const accounts = await web3.eth.getAccounts();
+    console.log('Sending from Metamask account: ' , accounts[0]);
+    const ethAddress= await storeMyValue.options.address;
+    this.setState({ethAddress});
+    await ipfs.add(this.state.buffer, (err, ipfsHash) => {
+      console.log(err, ipfsHash);
+      this.setState({ ipfsHash:ipfsHash[0].hash });
+      storeMyValue.methods.set(this.state.ipfsHash).send({from: accounts[0]}, (error, transactionHash) => {
+        console.log("transaction hash is ",transactionHash);
+        this.setState({transactionHash});
       });
     });
   }
