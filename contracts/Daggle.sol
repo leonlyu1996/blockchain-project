@@ -22,8 +22,19 @@ contract Daggle {
   mapping (address => Submission) submissions;
 
   // Constructor
-  constructor(string memory _title, string memory _description, uint _rewardAmount, string memory _trainDataIpfsPath, string memory _testDataIpfsPath) public payable {
+  constructor() public {
+  }
+
+  function createCompetition(
+    string memory _title, 
+    string memory _description, 
+    uint _rewardAmount, 
+    string memory _trainDataIpfsPath, 
+    string memory _testDataIpfsPath
+  ) public payable {
     assert(_rewardAmount > 0);
+    require(msg.value >= rewardAmount);
+
     problemOwner = msg.sender;
     title = _title;
     description = _description;
@@ -34,12 +45,10 @@ contract Daggle {
     isFinished = false;
   }
 
-  function payReward() public payable {
-    require(msg.value >= rewardAmount);
-  }
-
   function submit(address _competitor, string memory _ipfsPath, int256 _accuracy) public returns (bool) {
     assert(isFinished == false);
+
+    require(msg.sender != problemOwner);
 
     submissions[_competitor] = Submission(_ipfsPath, _accuracy, block.timestamp);
 
@@ -64,6 +73,8 @@ contract Daggle {
   function finalize() public returns (string memory, int256, uint) {
       // Make sure contract is not terminated
       assert(isFinished == false);
+
+      require(msg.sender == problemOwner);
       
       // cast address to address payable
       address payable winner = address(uint160(currentLeader));
