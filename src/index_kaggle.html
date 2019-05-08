@@ -159,10 +159,53 @@
 
       // Should be triggered on form submit
       $('#competitionCreateModal').modal('hide');
-      console.log(e);
+      competitionData = {};
+      competitionData['title'] = $('#competitionTitle').val();
+      competitionData['description'] = $('#competitionDescription').val();
+      competitionData['fileAfid'] = "";
+      competitionData['evaluationMethod'] = $('#competitionEvaluationMethod').val();
+      let formData = new FormData();
+      formData.append('file',$('#competitionData')[0].files[0]);
+      $.ajax({
+          url: 'http://9218.afilesys.xyz:5142/afs_upload/wf',
+          type: 'POST',
+          cache: false,
+          data: formData,
+          processData: false,
+          contentType: false
+      })
+      .done(function(res){
+        competitionData['fileAfid'] = res.split(';')[2].split('=')[1];
+        console.log(competitionData);
+        downloadFile(competitionData['fileAfid'], 'a.txt');
+      })
+      .fail(function(res){
+        alert('File upload failed!')
+      })
       console.log("submitted");
     });
   });
+
+  function downloadFile(afid, filename){
+    xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      var a;
+      if (xhttp.readyState === 4 && xhttp.status === 200) {
+          // Trick for making downloadable link
+          a = document.createElement('a');
+          a.href = window.URL.createObjectURL(xhttp.response);
+          // Give filename you wish to download
+          a.download = "filename";
+          a.style.display = 'none';
+          document.body.appendChild(a);
+          a.click();
+        }
+    };
+    xhttp.open('GET', 'http://9218.afilesys.xyz:5142/afs_download?afid=' + afid);
+    xhttp.responseType = 'blob';
+    xhttp.send();
+
+  }
   </script>
 
 </html>
