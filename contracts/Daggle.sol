@@ -2,90 +2,112 @@ pragma solidity ^0.5.0;
 
 contract Daggle {
 
+  struct Competition {
+    uint id;
+    address problemOwner;
+    string title;
+    string description;
+    uint rewardAmount;
+    string trainDataPath;
+    string testDataPath;
+    mapping (address => Submission) submissions;
+    address currentLeader;
+    int256 bestAccuracy;
+    bool isFinished;
+  }
+
   struct Submission {
-    string ipfsPath;
+    string dataPath;
     int256 accuracy;
     uint timestamp;
   }
-
-  address public problemOwner;
-  string public title;
-  string public description;
-  uint public rewardAmount;
-  bool public isFinished;
-  string trainDataIpfsPath;
-  string testDataIpfsPath;
-
-  address public currentLeader;
-  int256 public bestAccuracy;
-
-  mapping (address => Submission) submissions;
+  
+  Competition[] public competitions;
 
   // Constructor
   constructor() public {
+
   }
 
-  function createCompetition(
+  function createCompetition (
     string memory _title, 
     string memory _description, 
     uint _rewardAmount, 
-    string memory _trainDataIpfsPath, 
-    string memory _testDataIpfsPath
-  ) public payable {
-    assert(_rewardAmount > 0);
-    require(msg.value >= rewardAmount);
+    string memory _trainDataPath, 
+    string memory _testDataPath
+  ) public {
 
-    problemOwner = msg.sender;
-    title = _title;
-    description = _description;
-    rewardAmount = _rewardAmount;
-    trainDataIpfsPath = _trainDataIpfsPath;
-    testDataIpfsPath = _testDataIpfsPath;
-    bestAccuracy = 0;
-    isFinished = false;
+    assert(_rewardAmount > 0);
+    // require(msg.value >= _rewardAmount);
+
+    Competition memory newCompetition;
+    newCompetition.id = competitions.length;
+    newCompetition.problemOwner= msg.sender;
+    newCompetition.title = _title;
+    newCompetition.description = _description;
+    newCompetition.rewardAmount = _rewardAmount;
+    newCompetition.trainDataPath = _trainDataPath;
+    newCompetition.testDataPath = _testDataPath;
+    newCompetition.isFinished = false;
+
+    competitions.push(newCompetition);    
   }
 
-  function submit(address _competitor, string memory _ipfsPath, int256 _accuracy) public returns (bool) {
-    assert(isFinished == false);
+  // function getCompetition(uint id) public returns (Competition memory) {
+  //   return competitions[id];
+  // }
 
-    require(msg.sender != problemOwner);
+  function submit(uint competitionId, address _competitor, string memory _ipfsPath, int256 _accuracy) public returns (bool) {
+    
+    require(competitionId >= 0 && competitionId < competitions.length);
 
-    submissions[_competitor] = Submission(_ipfsPath, _accuracy, block.timestamp);
+    Competition storage competition = competitions[competitionId];
 
-    if (_accuracy > bestAccuracy) {
-      bestAccuracy = _accuracy;
-      currentLeader = _competitor;
+    require(msg.sender != competition.problemOwner);
+    require(competition.isFinished == false);
+    
+    competition.submissions[_competitor] = Submission(_ipfsPath, _accuracy, block.timestamp);
+
+    if (_accuracy > competition.bestAccuracy) {
+      competition.bestAccuracy = _accuracy;
+      competition.currentLeader = _competitor;
     }
 
     return true;
-
   }
 
-  function getSubmission() public view returns (string memory, int256, uint) {
-    Submission memory mySubmission = submissions[msg.sender];
-    return (mySubmission.ipfsPath, mySubmission.accuracy, mySubmission.timestamp);
+  function getSubmission(uint competitionId) public view returns (string memory, int256, uint) {
+    require(competitionId >= 0 && competitionId < competitions.length);
+
+    Competition storage competition = competitions[competitionId];
+    Submission memory mySubmission = competition.submissions[msg.sender];
+    return (mySubmission.dataPath, mySubmission.accuracy, mySubmission.timestamp);
   }
 
   // function evaluate() public returns (Submission) {
   //   //TODO
   // }
 
-  function finalize() public returns (string memory, int256, uint) {
-      // Make sure contract is not terminated
-      assert(isFinished == false);
-
-      require(msg.sender == problemOwner);
+  function endCompetition(uint competitionId) public payable returns (string memory, int256, uint) {
       
+      require(competitionId >= 0 && competitionId < competitions.length);
+
+      Competition storage competition = competitions[competitionId];
+
+      require(msg.sender == competition.problemOwner);
+      require(msg.value >= competition.rewardAmount);
+      require(competition.isFinished == false);
+
       // cast address to address payable
-      address payable winner = address(uint160(currentLeader));
+      address payable winner = address(uint160(competition.currentLeader));
 
-      winner.transfer(address(this).balance);
+      winner.transfer(competition.rewardAmount);
       
-      isFinished = true;
+      competition.isFinished = true;
 
-      Submission memory bestSubmission = submissions[winner];
+      Submission memory bestSubmission = competition.submissions[winner];
 
-      return (bestSubmission.ipfsPath, bestSubmission.accuracy, bestSubmission.timestamp);
+      return (bestSubmission.dataPath, bestSubmission.accuracy, bestSubmission.timestamp);
     }
 
 }
