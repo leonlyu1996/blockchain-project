@@ -65,11 +65,20 @@ App_kaggle = {
             competition['currentLeader'] = data[7];
             competition['bestAccuracy'] = data[8];
             competition['isFinished'] = data[9];
+            submissionData = await instance.getSubmission(i);
+            submission = {};
+            submission['fileAfid'] = submissionData[0];
+            submission['accuracy'] = submissionData[1].toNumber();
+            d = new Date(submissionData[2].toNumber()*1000);
+            submission['time'] = d.toLocaleString();
+            competition['submission'] = submission;
+            console.log(competition);
             App_kaggle.competitions.push(competition);
           }
           var competitionRow = $('#competitionRow');
           var competitionTemplate = $('#competitionTemplate');
           App_kaggle.competitions.forEach((data, idx)=>{
+            competitionTemplate.find('.panel-body').attr("competition-id", data['id']);
             competitionTemplate.find('.panel-title').text(data.title);
             competitionTemplate.find('.competition-description').text(data.description);
             competitionTemplate.find('.competition-id').text(data.id);
@@ -80,7 +89,16 @@ App_kaggle = {
             competitionTemplate.find('.competition-testing-file').attr("onclick", "downloadFile('" + data.testFileAfid + "', 'test.csv')");
             competitionTemplate.find('.competition-owner').text(data.problemOwner);
             competitionTemplate.find('.btn-menu').attr("onclick", "preFillID(" + idx + ")");
-
+            submissionData = data.submission;
+            if (submissionData['fileAfid'] != ''){
+              competitionTemplate.find('.submission-afid').text(submissionData['fileAfid']);
+              competitionTemplate.find('.submission-accuracy').text(submissionData['accuracy']);
+              competitionTemplate.find('.submission-time').text(submissionData['time']);
+            } else{
+              competitionTemplate.find('.submission-afid').text("");
+              competitionTemplate.find('.submission-accuracy').text("");
+              competitionTemplate.find('.submission-time').text("");
+            }
             competitionRow.append(competitionTemplate.html());
           });
       })
@@ -94,18 +112,24 @@ App_kaggle = {
 
     web3.eth.getAccounts(function(error, accounts){
       var account = accounts[0];
-      App_kaggle.contracts.Daggle.deployed().then(function(instance){
+      App_kaggle.contracts.Daggle.deployed().then(async function(instance){
         DaggleInstance = instance;
-        return DaggleInstance.submit(
+        result = await DaggleInstance.submit(
           submissionData['competitionID'],
           submissionData['submissionAfid'],
           {from: account}
         );
+        submissionRes = await DaggleInstance.getSubmission(submissionData['competitionID']);
+        submission = {};
+        submission['fileAfid'] = submissionRes[0];
+        submission['accuracy'] = submissionRes[1].toNumber();
+        d = new Date(submissionRes[2].toNumber()*1000);
+        submission['time'] = d.toLocaleString();
+        var competitionTemplate = $('.panel-body[competition-id=' + submissionData['competitionID'].toString() + ']');
+        competitionTemplate.find('.submission-afid').text(submission['fileAfid']);
+        competitionTemplate.find('.submission-accuracy').text(submission['accuracy']);
+        competitionTemplate.find('.submission-time').text(submission['time']);
       })
-      .then(function(result){
-        console.log(result);
-      })
-
     })
   },
   createCompetition: function(competitionData) {

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <title>Daggle - Competitions List</title>
+    <style>
+    .panel-body span {
+      overflow-wrap: break-word;
+    }
+    span.link {
+     cursor:pointer;
+     color: #07C;
+     text-decoration:underline;
+    }
+    span.link:hover{
+      color: #739bb7;
+    }
+    </style>
+
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-push-2">
+          <h1 class="text-center" style="color:#20BEFF">Daggle</h1>
+          <br/>
+          <h4 class="text-center">The Decentralized Kaggle</h4>
+        </div>
+      </div>
+      <hr/>
+      <br/>
+      <div id="competitionRow" class="row">
+        <div id="competitionTemplate" style="display:None">
+          <div class="col-sm-6 col-md-4 col-lg-4">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Competition Title 1</h3>
+              </div>
+              <div class="panel-body">
+                <strong>ID</strong>: <span class="competition-id"></span><br/>
+                <strong>Owner</strong>: <span style="font-size:12px;" class=" competition-owner"></span><br/>
+                <strong>Description</strong>: <span class=" competition-description"></span><br/>
+                <strong>Reward</strong>: <span class=" competition-reward"></span><br/>
+                <strong>Training file</strong>: <span class="link competition-training-file"></span><br/>
+                <strong>Testing file</strong>: <span class="link competition-testing-file"></span><br/>
+                <br/>
+                <button type="button" class="btn btn-default btn-menu center-bloc">
+                  End competition
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="js/app_kaggle.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+  <script>
+  $(function() {
+    
+  });
+  </script>
+
+</html>
