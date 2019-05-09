@@ -28,6 +28,8 @@ contract Daggle {
   constructor() public {
 
   }
+  function () external payable {
+  }
 
   function getNumberOfCompetitions() public view returns (uint){
     return competitions.length;
@@ -39,10 +41,9 @@ contract Daggle {
     uint _rewardAmount,
     string memory _trainDataPath,
     string memory _testDataPath
-  ) public {
+  ) public payable{
 
-    assert(_rewardAmount > 0);
-    // require(msg.value >= _rewardAmount);
+    // assert(_rewardAmount > 0);
 
     Competition memory newCompetition;
     newCompetition.id = competitions.length;

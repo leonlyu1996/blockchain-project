@@ -51,7 +51,7 @@ App_kaggle = {
       App_kaggle.contracts.Daggle.deployed().then(async function(instance){
           console.log(instance);
           data = await instance.getNumberOfCompetitions();
-          let n = data.toNumber();
+          let n = data===undefined?0:data.toNumber();
           for (i = 0; i<n; i++){
             data = await instance.competitions(i);
             competition = {};
@@ -102,7 +102,7 @@ App_kaggle = {
             competitionData['reward'],
             competitionData['trainingFileAfid'],
             competitionData['testingFileAfid'],
-            {from: account});
+            {from: account, value: web3.toWei(competitionData['reward'],'ether')});
       })
       .then(function(result){
         console.log(result);
