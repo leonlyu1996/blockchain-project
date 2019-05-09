@@ -290,10 +290,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        459,
-                        460
+                        445,
+                        446
                       ],
-                      "referencedDeclaration": 459,
+                      "referencedDeclaration": 445,
                       "src": "161:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -376,7 +376,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 456,
+                        "referencedDeclaration": 442,
                         "src": "221:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -850,10 +850,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        459,
-                        460
+                        445,
+                        446
                       ],
-                      "referencedDeclaration": 459,
+                      "referencedDeclaration": 445,
                       "src": "161:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -936,7 +936,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 456,
+                        "referencedDeclaration": 442,
                         "src": "221:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -1189,12 +1189,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0xF0Ac364D1B86c6eE6B8439B29e09E766b1850170",
-      "transactionHash": "0x1b222fb1bd2bc13a0ced5639583eb01a950ce69ad2e88334a7145924140033d7"
+      "address": "0xaC0566cc5122C0693d0c945BbEE5e336F843d782",
+      "transactionHash": "0x26fb8a1aa23dce173ec1d254749739df628952bb4a8547def6c55cedf28cad72"
     }
   },
   "schemaVersion": "3.0.9",
-  "updatedAt": "2019-05-09T08:26:10.484Z",
+  "updatedAt": "2019-05-09T08:58:31.414Z",
   "devdoc": {
     "methods": {}
   },

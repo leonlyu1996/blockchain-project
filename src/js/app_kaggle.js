@@ -86,6 +86,28 @@ App_kaggle = {
       })
     })
   },
+  submitModel: function(submissionData){
+    console.log("model submission");
+    console.log(submissionData);
+
+    var DaggleInstance;
+
+    web3.eth.getAccounts(function(error, accounts){
+      var account = accounts[0];
+      App_kaggle.contracts.Daggle.deployed().then(function(instance){
+        DaggleInstance = instance;
+        return DaggleInstance.submit(
+          submissionData['competitionID'],
+          submissionData['submissionAfid'],
+          {from: account}
+        );
+      })
+      .then(function(result){
+        console.log(result);
+      })
+
+    })
+  },
   createCompetition: function(competitionData) {
     console.log("createCompetition");
     console.log(competitionData);
@@ -109,30 +131,6 @@ App_kaggle = {
       })
 
     })
-
-  //   var petId = parseInt($(event.target).data('id'));
-  //
-  //   var adoptionInstance;
-  //
-  //   web3.eth.getAccounts(function(error, accounts) {
-  //     if (error) {
-  //       console.log(error);
-  //     }
-  //
-  //     var account = accounts[0];
-  //
-  //     App_kaggle.contracts.Adoption.deployed().then(function(instance) {
-  //       adoptionInstance = instance;
-  //
-  //       // Execute adopt as a transaction by sending account
-  //       return adoptionInstance.adopt(petId, {from: account});
-  //     }).then(function(result) {
-  //       return App_kaggle.markAdopted();
-  //     }).catch(function(err) {
-  //       console.log(err.message);
-  //     });
-  //   });
-  // }
   }
 }
 

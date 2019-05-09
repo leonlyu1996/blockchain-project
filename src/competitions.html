@@ -92,7 +92,45 @@
   </body>
   <script>
   $(function() {
+    $('#modelSubmissionForm').on("submit",async function(e) {
+      e.preventDefault();
 
+      $('#modelSubmitModal').modal('hide');
+      submissionData = {};
+      submissionData['competitionID'] = $('#competitionID').val();
+      submissionData['submissionAfid'] = "";
+
+      let submissionFormData = new FormData();
+      submissionFormData.append('file',$('#modelSubmission')[0].files[0]);
+
+      try {
+        submissionPostResult = await $.ajax({
+          url: 'http://9218.afilesys.xyz:5142/afs_upload/wf',
+          type: 'POST',
+          cache: false,
+          data: submissionFormData,
+          processData: false,
+          contentType: false
+        });
+
+        submissionPostSuccess = submissionPostResult.split(';')[1].split('=')[1] == 'true';
+
+        if (!submissionPostSuccess){
+          alert('upload failed...check console for error msg');
+          console.log(submissionPostResult);
+        }else{
+          submissionData['submissionAfid'] = submissionPostResult.split(';')[2].split('=')[1];
+          App_kaggle.submitModel(submissionData);
+        }
+          //console.log(competitionData);
+          //downloadFile(competitionData['trainingFileAfid'], 'a.txt');
+
+
+      }catch(error){
+        console.log(error);
+      }
+
+    });
   });
   </script>
 

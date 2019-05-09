@@ -62,7 +62,7 @@ contract Daggle {
   //   return competitions[id];
   // }
 
-  function submit(uint competitionId, address _competitor, string memory _ipfsPath, int256 _accuracy) public returns (bool) {
+  function submit(uint competitionId, string memory _fileAfid) public returns (bool) {
 
     require(competitionId >= 0 && competitionId < competitions.length);
 
@@ -71,16 +71,13 @@ contract Daggle {
     require(msg.sender != competition.problemOwner);
     require(competition.isFinished == false);
 
-    competition.submissions[_competitor] = Submission(_ipfsPath, _accuracy, block.timestamp);
+    competition.submissions[msg.sender] = Submission(_fileAfid, 1, block.timestamp);
 
-    if (_accuracy > competition.bestAccuracy) {
-      competition.bestAccuracy = _accuracy;
-      competition.currentLeader = _competitor;
-    }
+    competition.currentLeader = msg.sender;
 
     return true;
   }
-
+  
   function getSubmission(uint competitionId) public view returns (string memory, int256, uint) {
     require(competitionId >= 0 && competitionId < competitions.length);
 
