@@ -95,39 +95,8 @@
                 <input id="competitionDescription"  class="form-control" placeholder="insert description...">
               </div>
               <div class="form-group">
-                <label for="competitionEvaluationMethod">Evaluation method:</label>
-                <select id="competitionEvaluationMethod"  class="form-control">
-                  <option>Accuracy</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="competitionData">Upload data:</label>
-                <input type="file" class="form-control-file" id="competitionData">
-              </div>
-              <button type="submit" class="btn btn-default">Submit</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Competition Create Modal -->
-    <div class="modal fade" id="competitionCreateModal" tabindex="-1" role="dialog" aria-labelledby="competitionCreateModalLabel">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="competitionCreateModalLabel">Create competition</h4>
-          </div>
-          <div class="modal-body">
-            <form role="form" id="competitionCreationForm">
-              <div class="form-group">
-                <label for="competitionTitle">Title:</label>
-                <input id="competitionTitle"  class="form-control" placeholder="insert title...">
-              </div>
-              <div class="form-group">
-                <label for="competitionDescription">Description:</label>
-                <input id="competitionDescription"  class="form-control" placeholder="insert description...">
+                <label for="competitionReward">Reward Amount:</label>
+                <input id="competitionReward"  class="form-control" placeholder="insert amount...">
               </div>
               <div class="form-group">
                 <label for="competitionEvaluationMethod">Evaluation method:</label>
@@ -136,8 +105,12 @@
                 </select>
               </div>
               <div class="form-group">
-                <label for="competitionData">Upload data:</label>
-                <input type="file" class="form-control-file" id="competitionData">
+                <label for="competitionTrainingData">Training data:</label>
+                <input type="file" class="form-control-file" id="competitionTrainingData">
+              </div>
+              <div class="form-group">
+                <label for="competitionTestingData">Testing data:</label>
+                <input type="file" class="form-control-file" id="competitionTestingData">
               </div>
               <button type="submit" class="btn btn-default">Submit</button>
             </form>
@@ -148,11 +121,12 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="js/app_kaggle.js"></script>
+    <script src="js/truffle-contract.js"></script>
     <script src="js/bootstrap.min.js"></script>
   </body>
   <script>
   $(function() {
-    $('#competitionCreationForm').on("submit",function(e) {
+    $('#competitionCreationForm').on("submit",async function(e) {
       e.preventDefault(); // cancel the actual submit
 
       /* do what you want with the form */
@@ -162,27 +136,50 @@
       competitionData = {};
       competitionData['title'] = $('#competitionTitle').val();
       competitionData['description'] = $('#competitionDescription').val();
-      competitionData['fileAfid'] = "";
+      competitionData['trainingFileAfid'] = "";
+      competitionData['testingFileAfid'] = "";
       competitionData['evaluationMethod'] = $('#competitionEvaluationMethod').val();
-      let formData = new FormData();
-      formData.append('file',$('#competitionData')[0].files[0]);
-      $.ajax({
+      competitionData['reward'] = parseInt($('#competitionReward').val());
+      let trainFormData = new FormData();
+      trainFormData.append('file',$('#competitionTrainingData')[0].files[0]);
+      let testFormData = new FormData();
+      testFormData.append('file',$('#competitionTestingData')[0].files[0]);
+      try {
+        trainPostResult = await $.ajax({
           url: 'http://9218.afilesys.xyz:5142/afs_upload/wf',
           type: 'POST',
           cache: false,
-          data: formData,
+          data: trainFormData,
           processData: false,
           contentType: false
-      })
-      .done(function(res){
-        competitionData['fileAfid'] = res.split(';')[2].split('=')[1];
-        console.log(competitionData);
-        downloadFile(competitionData['fileAfid'], 'a.txt');
-      })
-      .fail(function(res){
-        alert('File upload failed!')
-      })
-      console.log("submitted");
+        });
+        testPostResult = await $.ajax({
+          url: 'http://9218.afilesys.xyz:5142/afs_upload/wf',
+          type: 'POST',
+          cache: false,
+          data: testFormData,
+          processData: false,
+          contentType: false
+        });
+        trainPostSuccess = trainPostResult.split(';')[1].split('=')[1] == 'true';
+        testPostSuccess = testPostResult.split(';')[1].split('=')[1] == 'true';
+        if (!trainPostSuccess || !testPostSuccess){
+          alert('upload failed...check console for error msg');
+          console.log(trainPostResult);
+          console.log(testPostResult);
+        }else{
+          competitionData['trainingFileAfid'] = trainPostResult.split(';')[2].split('=')[1];
+          competitionData['testingFileAfid'] = testPostResult.split(';')[2].split('=')[1];
+          App_kaggle.createCompetition(competitionData);
+        }
+          //console.log(competitionData);
+          //downloadFile(competitionData['trainingFileAfid'], 'a.txt');
+
+
+      }catch(error){
+        console.log(error);
+      }
+
     });
   });
 
@@ -195,7 +192,7 @@
           a = document.createElement('a');
           a.href = window.URL.createObjectURL(xhttp.response);
           // Give filename you wish to download
-          a.download = "filename";
+          a.download = filename;
           a.style.display = 'none';
           document.body.appendChild(a);
           a.click();

@@ -36,27 +36,79 @@ App_kaggle = {
   },
 
   initContract: function() {
-    // $.getJSON('Adoption.json', function(data) {
-    //   // Get the necessary contract artifact file and instantiate it with truffle-contract
-    //   var AdoptionArtifact = data;
-    //   App_kaggle.contracts.Adoption = TruffleContract(AdoptionArtifact);
-    //
-    //   // Set the provider for our contract
-    //   App_kaggle.contracts.Adoption.setProvider(App_kaggle.web3Provider);
-    //
-    //   // Use our contract to retrieve and mark the adopted pets
-    //   return App_kaggle.markAdopted();
-    // });
-
-    return App_kaggle.bindEvents();
+    $.getJSON('Daggle.json', function(data){
+      var DaggleArtifact = data;
+      App_kaggle.contracts.Daggle = TruffleContract(DaggleArtifact);
+      App_kaggle.contracts.Daggle.setProvider(App_kaggle.web3Provider);
+      return App_kaggle.getCompetitions();
+    });
+    return;
   },
+  getCompetitions: function(){
+    App_kaggle.competitions = [];
+    web3.eth.getAccounts(function(error, accounts){
+      var account = accounts[0];
+      App_kaggle.contracts.Daggle.deployed().then(async function(instance){
+          console.log(instance);
+          data = await instance.getNumberOfCompetitions();
+          let n = data.toNumber();
+          for (i = 0; i<n; i++){
+            data = await instance.competitions(i);
+            competition = {};
+            competition['id'] = data[0].toNumber();
+            competition['problemOwner'] = data[1];
+            competition['title'] = data[2];
+            competition['description'] = data[3];
+            competition['reward'] = data[4].toNumber();
+            competition['trainFileAfid'] = data[5];
+            competition['testFileAfid'] = data[6];
+            competition['currentLeader'] = data[7];
+            competition['bestAccuracy'] = data[8];
+            competition['isFinished'] = data[9];
+            App_kaggle.competitions.push(competition);
+          }
+          var competitionRow = $('#competitionRow');
+          var competitionTemplate = $('#competitionTemplate');
+          App_kaggle.competitions.forEach((data, idx)=>{
+            competitionTemplate.find('.panel-title').text(data.title);
+            competitionTemplate.find('.competition-description').text(data.description);
+            competitionTemplate.find('.competition-id').text(data.id);
+            competitionTemplate.find('.competition-reward').text(data.reward);
+            competitionTemplate.find('.competition-training-file').text("download");
+            competitionTemplate.find('.competition-training-file').attr("onclick", "downloadFile('" + data.trainFileAfid + "', 'train.csv')");
+            competitionTemplate.find('.competition-testing-file').text("download");
+            competitionTemplate.find('.competition-testing-file').attr("onclick", "downloadFile('" + data.testFileAfid + "', 'test.csv')");
+            competitionTemplate.find('.competition-owner').text(data.problemOwner);
+            competitionTemplate.find('.btn-menu').attr("onclick", "preFillID(" + idx + ")");
 
-  bindEvents: function() {
-    $(document).on('click', '.btn-create', App_kaggle.handleCreate);
+            competitionRow.append(competitionTemplate.html());
+          });
+      })
+    })
   },
+  createCompetition: function(competitionData) {
+    console.log("createCompetition");
+    console.log(competitionData);
 
-  handleCreate: function(event) {
-    event.preventDefault();
+    var DaggleInstance;
+
+    web3.eth.getAccounts(function(error, accounts){
+      var account = accounts[0];
+      App_kaggle.contracts.Daggle.deployed().then(function(instance){
+        DaggleInstance = instance;
+        return DaggleInstance.createCompetition(
+            competitionData['title'],
+            competitionData['description'],
+            competitionData['reward'],
+            competitionData['trainingFileAfid'],
+            competitionData['testingFileAfid'],
+            {from: account});
+      })
+      .then(function(result){
+        console.log(result);
+      })
+
+    })
 
   //   var petId = parseInt($(event.target).data('id'));
   //
@@ -89,3 +141,28 @@ $(function() {
     App_kaggle.init();
   });
 });
+
+function preFillID(idx){
+  $('#competitionID').val(idx.toString());
+}
+
+function downloadFile(afid, filename){
+  xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    var a;
+    if (xhttp.readyState === 4 && xhttp.status === 200) {
+        // Trick for making downloadable link
+        a = document.createElement('a');
+        a.href = window.URL.createObjectURL(xhttp.response);
+        // Give filename you wish to download
+        a.download = filename;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+      }
+  };
+  xhttp.open('GET', 'http://9218.afilesys.xyz:5142/afs_download?afid=' + afid);
+  xhttp.responseType = 'blob';
+  xhttp.send();
+
+}

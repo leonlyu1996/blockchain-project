@@ -7,6 +7,20 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <title>Daggle - Competitions List</title>
+    <style>
+    .panel-body span {
+      overflow-wrap: break-word;
+    }
+    span.link {
+     cursor:pointer;
+     color: #07C;
+     text-decoration:underline;
+    }
+    span.link:hover{
+      color: #739bb7;
+    }
+    </style>
+
   </head>
   <body>
     <div class="container">
@@ -20,37 +34,52 @@
       <hr/>
       <br/>
       <div id="competitionRow" class="row">
-        <div id="competitionTemplate">
-          <div class="col-sm-6 col-md-4 col-lg-3">
+        <div id="competitionTemplate" style="display:None">
+          <div class="col-sm-6 col-md-4 col-lg-4">
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h3 class="panel-title">Competition Title 1</h3>
               </div>
               <div class="panel-body">
-                <strong>Description</strong>: <span class="competition-description">Competition 1 description</span><br/>
-                <strong>Evaluation Method</strong>: <span class="competition-evaluation">Accuracy</span><br/>
-                <button class="btn btn-default btn-menu" type="button" data-id="0">Join</button>
+                <strong>ID</strong>: <span class="competition-id"></span><br/>
+                <strong>Owner</strong>: <span style="font-size:12px;" class=" competition-owner"></span><br/>
+                <strong>Description</strong>: <span class=" competition-description"></span><br/>
+                <strong>Reward</strong>: <span class=" competition-reward"></span><br/>
+                <strong>Training file</strong>: <span class="link competition-training-file"></span><br/>
+                <strong>Testing file</strong>: <span class="link competition-testing-file"></span><br/>
+                <br/>
+                <button type="button" class="btn btn-default btn-menu center-bloc" data-toggle="modal" data-target="#modelSubmitModal">
+                  Submit Model
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div id="competitionTemplate" style="display: none;">
-        <div class="col-sm-6 col-md-4 col-lg-3">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h3 class="panel-title">Competition Title 1</h3>
+      <!-- Competition Create Modal -->
+      <div class="modal fade" id="modelSubmitModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">Model submission</h4>
             </div>
-            <div class="panel-body">
-              <strong>Description</strong>: <span class="competition-description">Competition 1 description</span><br/>
-              <strong>Evaluation Method</strong>: <span class="competition-evaluation">Accuracy</span><br/>
-              <button class="btn btn-default btn-menu" type="button" data-id="0">Join</button>
+            <div class="modal-body">
+              <form role="form" id="modelSubmissionForm">
+                <div class="form-group">
+                  <label for="competitionID">Competition ID: </label>
+                  <input id="competitionID"  class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="modelSubmission">Upload data:</label>
+                  <input type="file" class="form-control-file" id="modelSubmission">
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+              </form>
             </div>
           </div>
         </div>
       </div>
-
-
 
     </div>
 
@@ -58,20 +87,12 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="js/app_kaggle.js"></script>
+    <script src="js/truffle-contract.js"></script>
     <script src="js/bootstrap.min.js"></script>
   </body>
   <script>
   $(function() {
-    $('#competitionCreationForm').on("submit",function(e) {
-      e.preventDefault(); // cancel the actual submit
 
-      /* do what you want with the form */
-
-      // Should be triggered on form submit
-      $('#competitionCreateModal').modal('hide');
-      console.log(e);
-      console.log("submitted");
-    });
   });
   </script>
 

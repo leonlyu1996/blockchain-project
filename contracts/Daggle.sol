@@ -21,7 +21,7 @@ contract Daggle {
     int256 accuracy;
     uint timestamp;
   }
-  
+
   Competition[] public competitions;
 
   // Constructor
@@ -29,11 +29,15 @@ contract Daggle {
 
   }
 
+  function getNumberOfCompetitions() public view returns (uint){
+    return competitions.length;
+  }
+
   function createCompetition (
-    string memory _title, 
-    string memory _description, 
-    uint _rewardAmount, 
-    string memory _trainDataPath, 
+    string memory _title,
+    string memory _description,
+    uint _rewardAmount,
+    string memory _trainDataPath,
     string memory _testDataPath
   ) public {
 
@@ -50,7 +54,7 @@ contract Daggle {
     newCompetition.testDataPath = _testDataPath;
     newCompetition.isFinished = false;
 
-    competitions.push(newCompetition);    
+    competitions.push(newCompetition);
   }
 
   // function getCompetition(uint id) public returns (Competition memory) {
@@ -58,14 +62,14 @@ contract Daggle {
   // }
 
   function submit(uint competitionId, address _competitor, string memory _ipfsPath, int256 _accuracy) public returns (bool) {
-    
+
     require(competitionId >= 0 && competitionId < competitions.length);
 
     Competition storage competition = competitions[competitionId];
 
     require(msg.sender != competition.problemOwner);
     require(competition.isFinished == false);
-    
+
     competition.submissions[_competitor] = Submission(_ipfsPath, _accuracy, block.timestamp);
 
     if (_accuracy > competition.bestAccuracy) {
@@ -89,7 +93,7 @@ contract Daggle {
   // }
 
   function endCompetition(uint competitionId) public payable returns (string memory, int256, uint) {
-      
+
       require(competitionId >= 0 && competitionId < competitions.length);
 
       Competition storage competition = competitions[competitionId];
@@ -102,7 +106,7 @@ contract Daggle {
       address payable winner = address(uint160(competition.currentLeader));
 
       winner.transfer(competition.rewardAmount);
-      
+
       competition.isFinished = true;
 
       Submission memory bestSubmission = competition.submissions[winner];
